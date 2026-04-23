@@ -861,7 +861,7 @@ with tab_ai:
                     contents.append(types.Content(role="user", parts=[types.Part.from_text(text=prompt)]))
                     
                     response = client.models.generate_content(
-                        model="gemini-2.0-flash",
+                        model="gemini-1.5-flash",
                         contents=contents,
                         config=types.GenerateContentConfig(
                             system_instruction=sys_prompt,
