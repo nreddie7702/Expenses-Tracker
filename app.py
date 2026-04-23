@@ -873,27 +873,26 @@ with tab_ai:
 # ─────────────────────────────────────────
 with tab3:
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-    st.markdown('<div class="add-card">', unsafe_allow_html=True)
-    st.markdown('<p style="font-size:18px;font-weight:600;color:#0f172a;text-align:center;margin-bottom:1.2rem;">Add New Expense</p>', unsafe_allow_html=True)
+    st.subheader("Add New Expense")
 
-    e_date = st.date_input("Date", value=datetime.today(), key="t3_date")
-    e_desc = st.text_input("Description", placeholder="e.g. Swiggy, Amazon, Electricity bill", key="t3_desc")
-    e_amount = st.number_input("Amount (₹)", min_value=0.0, step=10.0, key="t3_amt")
-    e_cat = st.selectbox("Category", CATEGORIES, key="t3_cat")
+    with st.container(border=True):
+        e_date = st.date_input("Date", value=datetime.today(), key="t3_date")
+        e_desc = st.text_input("Description", placeholder="e.g. Swiggy, Amazon, Electricity bill", key="t3_desc")
+        e_amount = st.number_input("Amount (₹)", min_value=0.0, step=10.0, key="t3_amt")
+        e_cat = st.selectbox("Category", CATEGORIES, key="t3_cat")
 
-    if st.button("Add Expense", use_container_width=True, type="primary", key="t3_add"):
-        if not e_desc:
-            st.markdown('<div class="e-box">Please enter a description.</div>', unsafe_allow_html=True)
-        elif e_amount <= 0:
-            st.markdown('<div class="e-box">Please enter an amount greater than 0.</div>', unsafe_allow_html=True)
-        else:
-            success, err_msg = save_exp(uid, e_date, e_desc, e_amount, e_cat)
-            if success:
-                st.markdown('<div class="s-box">✅ Expense saved!</div>', unsafe_allow_html=True)
-                st.balloons()
+        if st.button("Add Expense", use_container_width=True, type="primary", key="t3_add"):
+            if not e_desc:
+                st.error("Please enter a description.")
+            elif e_amount <= 0:
+                st.error("Please enter an amount greater than 0.")
             else:
-                st.markdown(f'<div class="e-box">Failed to save: {err_msg}</div>', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+                success, err_msg = save_exp(uid, e_date, e_desc, e_amount, e_cat)
+                if success:
+                    st.success("✅ Expense saved!")
+                    st.balloons()
+                else:
+                    st.error(f"Failed to save: {err_msg}")
 
     # Quick category guide
     st.markdown("<div style='margin-top:1.2rem'></div>", unsafe_allow_html=True)
