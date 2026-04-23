@@ -390,9 +390,7 @@ with tab1:
 #  TAB 2 — ADD EXPENSE (mobile friendly)
 # ────────────────────────────────────────
 with tab2:
-    st.markdown("<div style='height:8px'></div>",unsafe_allow_html=True)
-    st.markdown('<div class="add-card">',unsafe_allow_html=True)
-    st.markdown('<div class="add-title">Add New Expense</div>',unsafe_allow_html=True)
+    st.markdown('<div class="sh">Add New Expense</div>', unsafe_allow_html=True)
 
     e_date=st.date_input("Date",value=datetime.today(),key="t2_date")
     e_desc=st.text_input("Description",placeholder="e.g. Swiggy, Amazon, Electricity bill",key="t2_desc")
@@ -411,7 +409,7 @@ with tab2:
             else:
                 st.markdown('<div class="e-box">Failed to save. Please try again.</div>',unsafe_allow_html=True)
 
-    st.markdown("</div>",unsafe_allow_html=True)
+
 
     st.markdown("<div style='margin-top:1.5rem'></div>",unsafe_allow_html=True)
     st.markdown('<div class="sh">Quick categories</div>',unsafe_allow_html=True)
