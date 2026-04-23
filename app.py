@@ -861,7 +861,7 @@ with tab_ai:
                     contents.append(types.Content(role="user", parts=[types.Part.from_text(text=prompt)]))
                     
                     # Automatic model fallback to prevent 404 or 429 quota limits
-                    models_to_try = ["gemini-1.5-flash-8b", "gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-1.5-pro"]
+                    models_to_try = ["gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro", "gemini-2.0-flash-lite-preview-02-05", "gemini-2.0-flash-exp"]
                     response = None
                     last_error = None
                     
@@ -880,7 +880,16 @@ with tab_ai:
                             continue
                     
                     if response is None:
-                        raise last_error
+                        # Fetch available models for debugging
+                        available_models = []
+                        try:
+                            for m in client.models.list():
+                                available_models.append(m.name)
+                        except: pass
+                        error_msg = str(last_error)
+                        if available_models:
+                            error_msg += f"\n\nAvailable models for your API key: {', '.join(available_models)}"
+                        raise Exception(error_msg)
                     
                     message_placeholder.markdown(response.text)
                     st.session_state.chat_history.append({"role": "assistant", "content": response.text})
