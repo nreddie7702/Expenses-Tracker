@@ -5,7 +5,8 @@ import matplotlib.dates as mdates
 from supabase import create_client, Client
 from datetime import datetime, timedelta, date
 import re
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 st.set_page_config(
     page_title="SpendSmart",
@@ -818,7 +819,7 @@ with tab_ai:
     if not api_key:
         st.markdown('<div class="w-box">⚠️ Please configure your <b>Gemini API Key</b> in the Settings tab to use the AI Assistant.</div>', unsafe_allow_html=True)
     else:
-        genai.configure(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         
         # Display chat history
         for message in st.session_state.chat_history:
@@ -852,15 +853,20 @@ with tab_ai:
                     
                     sys_prompt = "You are a helpful, professional, and concise financial advisor for the SpendSmart app. Answer the user's questions based on their spending data provided below:\n\n" + context
                     
-                    model = genai.GenerativeModel('gemini-1.5-flash')
-                    # Build history for model
-                    history = []
+                    contents = []
                     for msg in st.session_state.chat_history[:-1]:
                         role = "user" if msg["role"] == "user" else "model"
-                        history.append({"role": role, "parts": [msg["content"]]})
-                        
-                    chat = model.start_chat(history=history)
-                    response = chat.send_message(sys_prompt + "\n\nUser Question: " + prompt)
+                        contents.append(types.Content(role=role, parts=[types.Part.from_text(text=msg["content"])]))
+                    
+                    contents.append(types.Content(role="user", parts=[types.Part.from_text(text=prompt)]))
+                    
+                    response = client.models.generate_content(
+                        model="gemini-2.0-flash",
+                        contents=contents,
+                        config=types.GenerateContentConfig(
+                            system_instruction=sys_prompt,
+                        )
+                    )
                     
                     message_placeholder.markdown(response.text)
                     st.session_state.chat_history.append({"role": "assistant", "content": response.text})
