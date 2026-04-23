@@ -118,7 +118,11 @@ def sign_in(email,password):
 
 def google_url():
     try:
-        r=supabase.auth.sign_in_with_oauth({"provider":"google","options":{"redirect_to":"https://expenses-tracker-plgycyc5g72ujqrvfbchmv.streamlit.app/"}})
+        import os
+        # Auto-detect: localhost when running locally, cloud URL when deployed
+        is_cloud = os.environ.get("STREAMLIT_SHARING_MODE") or os.environ.get("IS_STREAMLIT_CLOUD")
+        redirect = "https://expenses-tracker-plgycyc5g72ujqrvfbchmv.streamlit.app/" if is_cloud else "http://localhost:8501/"
+        r=supabase.auth.sign_in_with_oauth({"provider":"google","options":{"redirect_to":redirect}})
         return r.url
     except: return None
 
